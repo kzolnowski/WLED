@@ -94,7 +94,15 @@ class Animated_Staircase : public Usermod {
     static const char _bottomEcho_pin[];
     static const char _topEchoCm[];
     static const char _bottomEchoCm[];
+
     
+
+    long duration;
+    long distance;
+
+    long duration;
+    long distance;
+
     void publishMqtt(bool bottom, const char* state) {
 #ifndef WLED_DISABLE_MQTT
       //Check if MQTT Connected, otherwise it will crash the 8266
@@ -156,7 +164,23 @@ class Animated_Staircase : public Usermod {
       digitalWrite(signalPin, HIGH);
       delayMicroseconds(10);
       digitalWrite(signalPin, LOW);
+      duration = pulseIn(signalPin, HIGH, maxTimeUs);
+      distance = duration * VELOCITY_TEMP(23) / 2.0;
+      if (distance > 0 ) {
+        Serial.print("Sensor distance ");
+        Serial.print(distance);
+        Serial.println(" cm");
+      }
+      return (distance > 0 && distance < 90);
       return pulseIn(echoPin, HIGH, maxTimeUs) > 0;
+      duration = pulseIn(signalPin, HIGH, maxTimeUs);
+      distance = duration * VELOCITY_TEMP(23) / 2.0;
+      if (distance > 0 ) {
+        Serial.print("Sensor distance ");
+        Serial.print(distance);
+        Serial.println(" cm");
+      }
+      return (distance > 0 && distance < 90);
     }
 
     bool checkSensors() {
