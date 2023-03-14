@@ -159,11 +159,14 @@ class Animated_Staircase : public Usermod {
     */
     bool ultrasoundRead(int8_t signalPin, int8_t echoPin, unsigned int maxTimeUs) {
       if (signalPin<0 || echoPin<0) return false;
+      pinMode(signalPin, OUTPUT);
+      pinMode(signalPin, OUTPUT);
       digitalWrite(signalPin, LOW);
       delayMicroseconds(2);
       digitalWrite(signalPin, HIGH);
       delayMicroseconds(10);
       digitalWrite(signalPin, LOW);
+      pinMode(signalPin, INPUT);
       duration = pulseIn(signalPin, HIGH, maxTimeUs);
       distance = duration * VELOCITY_TEMP(23) / 2.0;
       if (distance > 0 ) {
@@ -173,6 +176,7 @@ class Animated_Staircase : public Usermod {
       }
       return (distance > 0 && distance < 90);
       return pulseIn(echoPin, HIGH, maxTimeUs) > 0;
+      pinMode(signalPin, INPUT);
       duration = pulseIn(signalPin, HIGH, maxTimeUs);
       distance = duration * VELOCITY_TEMP(23) / 2.0;
       if (distance > 0 ) {
