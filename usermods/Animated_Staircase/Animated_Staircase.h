@@ -41,6 +41,10 @@ class Animated_Staircase : public Usermod {
   #define SWIPE_DOWN false
     bool swipe = SWIPE_UP;
 
+  #define    VELOCITY_TEMP(temp)       ( ( 331.5 + 0.6 * (float)( temp ) ) * 100 / 1000000.0 ) // The ultrasonic velocity (cm/us) compensated by temperature
+
+  #define    VELOCITY_TEMP(temp)       ( ( 331.5 + 0.6 * (float)( temp ) ) * 100 / 1000000.0 ) // The ultrasonic velocity (cm/us) compensated by temperature
+
     // Indicates which Sensor was seen last (to determine
     // the direction when swiping off)
   #define LOWER false
