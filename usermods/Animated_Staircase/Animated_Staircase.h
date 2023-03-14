@@ -4,7 +4,7 @@
  *
  * Edit the Animated_Staircase_config.h file to compile this usermod for your
  * specific configuration.
- * 
+ *
  * See the accompanying README.md file for more info.
  */
 #pragma once
@@ -40,8 +40,6 @@ class Animated_Staircase : public Usermod {
   #define SWIPE_UP true
   #define SWIPE_DOWN false
     bool swipe = SWIPE_UP;
-
-  #define    VELOCITY_TEMP(temp)       ( ( 331.5 + 0.6 * (float)( temp ) ) * 100 / 1000000.0 ) // The ultrasonic velocity (cm/us) compensated by temperature
 
   #define    VELOCITY_TEMP(temp)       ( ( 331.5 + 0.6 * (float)( temp ) ) * 100 / 1000000.0 ) // The ultrasonic velocity (cm/us) compensated by temperature
 
@@ -94,11 +92,6 @@ class Animated_Staircase : public Usermod {
     static const char _bottomEcho_pin[];
     static const char _topEchoCm[];
     static const char _bottomEchoCm[];
-
-    
-
-    long duration;
-    long distance;
 
     long duration;
     long distance;
@@ -160,22 +153,11 @@ class Animated_Staircase : public Usermod {
     bool ultrasoundRead(int8_t signalPin, int8_t echoPin, unsigned int maxTimeUs) {
       if (signalPin<0 || echoPin<0) return false;
       pinMode(signalPin, OUTPUT);
-      pinMode(signalPin, OUTPUT);
       digitalWrite(signalPin, LOW);
       delayMicroseconds(2);
       digitalWrite(signalPin, HIGH);
       delayMicroseconds(10);
       digitalWrite(signalPin, LOW);
-      pinMode(signalPin, INPUT);
-      duration = pulseIn(signalPin, HIGH, maxTimeUs);
-      distance = duration * VELOCITY_TEMP(23) / 2.0;
-      if (distance > 0 ) {
-        Serial.print("Sensor distance ");
-        Serial.print(distance);
-        Serial.println(" cm");
-      }
-      return (distance > 0 && distance < 90);
-      return pulseIn(echoPin, HIGH, maxTimeUs) > 0;
       pinMode(signalPin, INPUT);
       duration = pulseIn(signalPin, HIGH, maxTimeUs);
       distance = duration * VELOCITY_TEMP(23) / 2.0;
@@ -209,6 +191,7 @@ class Animated_Staircase : public Usermod {
           sensorChanged = true;
           publishMqtt(true, bottomSensorState ? "on" : "off");
           DEBUG_PRINTLN(F("Bottom sensor changed."));
+          Serial.println("Bottom sensor changed.");
         }
 
         if (topSensorRead != topSensorState) {
@@ -216,6 +199,7 @@ class Animated_Staircase : public Usermod {
           sensorChanged = true;
           publishMqtt(false, topSensorState ? "on" : "off");
           DEBUG_PRINTLN(F("Top sensor changed."));
+          Serial.println("Top sensor changed.");
         }
 
         // Values read, reset the flags for next API call
@@ -323,8 +307,8 @@ class Animated_Staircase : public Usermod {
         offIndex = maxSegmentId = strip.getLastActiveSegmentId() + 1;
 
         // shorten the strip transition time to be equal or shorter than segment delay
-        transitionDelayTemp = transitionDelay = segment_delay_ms;
-        strip.setTransition(segment_delay_ms/100);
+        transitionDelayTemp = transitionDelay = segment_delay_ms - 100;
+        strip.setTransition((segment_delay_ms-100)/100);
         strip.trigger();
       } else {
         // Restore segment options
@@ -481,7 +465,7 @@ class Animated_Staircase : public Usermod {
 
     /*
     * Reads the configuration to internal flash memory before setup() is called.
-    * 
+    *
     * The function should return true if configuration was successfully loaded or false if there was no configuration.
     */
     bool readFromConfig(JsonObject& root) {
